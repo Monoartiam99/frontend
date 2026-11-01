@@ -3,10 +3,13 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: "Geist", "Geist Placeholder", sans-serif;
-  --font-display: "Geist", "Geist Placeholder", sans-serif;
-  --color-brand: #811143;
-  --color-brand-deep: #420928;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --color-brand: #8B1038;
+  --color-brand-blue: #2D8FD5;
+  --color-accent-cyan: #22D3EE;
+  --color-accent-magenta: #E0457B;
   --color-ink: #0f172a;
 }
 
@@ -16,22 +19,16 @@
   }
 
   body {
-    background-color: #faf7f8;
+    background-color: #FAFAFC;
     color: #0f172a;
     font-family: var(--font-sans);
     font-size: 16px;
     font-weight: 400;
-    line-height: 1.4;
-    transition: background-color 0.25s ease, color 0.25s ease;
-  }
-
-  html.dark body {
-    background-color: #060913;
-    color: #f8fafc;
+    line-height: 1.5;
   }
 
   ::selection {
-    background: rgba(244, 63, 94, 0.3);
+    background: rgba(45, 143, 213, 0.25);
     color: inherit;
   }
 }
@@ -41,23 +38,16 @@
 }
 
 /* ---------------------------------------------------
-   PAGE ATMOSPHERE
+   PAGE ATMOSPHERE & BRAND PALETTE (DAY MODE)
 --------------------------------------------------- */
 .page-shell {
   position: relative;
   isolation: isolate;
   background:
-    radial-gradient(1000px 500px at 5% -5%, rgba(129, 17, 67, 0.06), transparent 50%),
-    radial-gradient(800px 450px at 95% 5%, rgba(216, 106, 157, 0.08), transparent 45%),
-    linear-gradient(180deg, #faf7f8 0%, #ffffff 25%, #ffffff 75%, #f9f6f7 100%);
-  transition: background 0.3s ease;
-}
-
-html.dark .page-shell {
-  background:
-    radial-gradient(1000px 500px at 5% -5%, rgba(129, 17, 67, 0.15), transparent 50%),
-    radial-gradient(800px 450px at 95% 5%, rgba(56, 189, 248, 0.1), transparent 45%),
-    linear-gradient(180deg, #060913 0%, #080d1e 25%, #060913 100%);
+    radial-gradient(900px 480px at 5% -5%, rgba(139, 16, 56, 0.08), transparent 52%),
+    radial-gradient(800px 450px at 95% 8%, rgba(45, 143, 213, 0.09), transparent 50%),
+    radial-gradient(700px 400px at 50% 30%, rgba(34, 211, 238, 0.06), transparent 50%),
+    linear-gradient(180deg, #FAFAFC 0%, #F4F6FB 25%, #FAFAFC 100%);
 }
 
 .mesh-grid {
@@ -66,64 +56,287 @@ html.dark .page-shell {
   pointer-events: none;
   z-index: 0;
   background-image:
-    linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse at 50% 15%, black 25%, transparent 75%);
-}
-
-html.dark .mesh-grid {
-  background-image:
-    linear-gradient(rgba(56, 189, 248, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse at 50% 20%, black 40%, transparent 85%);
 }
 
 .orb {
   position: absolute;
   z-index: 0;
   border-radius: 999px;
-  filter: blur(60px);
   pointer-events: none;
-  opacity: 0.6;
-  animation: orbDrift 16s ease-in-out infinite;
+  opacity: 0.85;
+  animation: orbDrift 22s ease-in-out infinite;
 }
 
 .orb-a {
-  width: 320px;
-  height: 320px;
-  top: 60px;
-  left: -80px;
-  background: rgba(129, 17, 67, 0.12);
+  width: 520px;
+  height: 520px;
+  top: -60px;
+  left: -100px;
+  background: radial-gradient(circle, rgba(139, 16, 56, 0.22) 0%, rgba(139, 16, 56, 0.05) 65%, transparent 100%);
+  filter: blur(80px);
 }
 
 .orb-b {
-  width: 260px;
-  height: 260px;
-  top: 140px;
-  right: -50px;
-  background: rgba(224, 107, 156, 0.14);
+  width: 580px;
+  height: 580px;
+  top: 40px;
+  right: -120px;
+  background: radial-gradient(circle, rgba(45, 143, 213, 0.25) 0%, rgba(34, 211, 238, 0.14) 60%, transparent 100%);
+  filter: blur(85px);
   animation-delay: -6s;
+}
+
+.orb-c {
+  width: 480px;
+  height: 480px;
+  top: 220px;
+  left: 24%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.18) 0%, rgba(224, 69, 123, 0.12) 55%, transparent 100%);
+  filter: blur(80px);
+  animation-delay: -11s;
+}
+
+.orb-hero-viewer {
+  width: 520px;
+  height: 520px;
+  top: 100px;
+  right: 2%;
+  background: radial-gradient(circle, rgba(139, 16, 56, 0.18) 0%, rgba(45, 143, 213, 0.22) 50%, transparent 100%);
+  filter: blur(90px);
+  animation: orbDrift 24s ease-in-out infinite reverse;
 }
 
 @keyframes orbDrift {
   0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(24px, -28px, 0) scale(1.08); }
+  50% { transform: translate3d(8px, -12px, 0) scale(1.04); }
 }
 
 /* ---------------------------------------------------
-   NAV
+   GLASSMORPHISM SPECIFICATIONS (ENHANCED INNER GLOW & BORDER HIGHLIGHT)
 --------------------------------------------------- */
-.glass-nav {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-  transition: background-color 0.25s ease, border-color 0.25s ease;
+.glass-panel {
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 20px 45px -12px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.6),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 1),
+    inset 0 0 18px rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-html.dark .glass-nav {
-  background: rgba(6, 10, 22, 0.85);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+/* Floating Glass Navbar */
+.floating-glass-nav {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 12px 36px -10px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.6),
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    inset 0 0 20px rgba(255, 255, 255, 0.45);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.floating-glass-nav.is-scrolled {
+  background: rgba(255, 255, 255, 0.90);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 18px 45px -10px rgba(15, 23, 42, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    inset 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.glass-badge-pill {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 4px 18px rgba(139, 16, 56, 0.10),
+    0 0 0 1px rgba(139, 16, 56, 0.18),
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    inset 0 0 12px rgba(255, 255, 255, 0.5);
+}
+
+html.dark .glass-badge-pill {
+  background: rgba(13, 21, 42, 0.72);
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  box-shadow: 0 4px 20px rgba(34, 211, 238, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.14);
+}
+
+/* Primary Button: Maroon -> Blue gradient with glossy highlight, glow & shimmer */
+.btn-primary-glow {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #8B1038 0%, #a8194b 45%, #2D8FD5 100%);
+  color: #ffffff;
+  box-shadow: 0 10px 25px -4px rgba(139, 16, 56, 0.38), 0 6px 14px -3px rgba(45, 143, 213, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.btn-primary-glow:hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 16px 35px -6px rgba(139, 16, 56, 0.48), 0 10px 20px -4px rgba(45, 143, 213, 0.38), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.btn-primary-glow:hover::before {
+  transform: translateX(200%);
+}
+
+.btn-primary-glow:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Secondary Button: Glass with gradient border on hover */
+.btn-secondary-glass {
+  position: relative;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.95);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-secondary-glass:hover {
+  transform: translateY(-2px);
+  border-color: rgba(45, 143, 213, 0.6);
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 8px 24px -4px rgba(45, 143, 213, 0.2), inset 0 1px 1px rgba(255, 255, 255, 1);
+}
+
+/* Animated Headline Gradient Text (Blue -> Magenta Shift) */
+@keyframes heroGradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-hero-shift {
+  background: linear-gradient(135deg, #2D8FD5 0%, #22D3EE 28%, #E0457B 68%, #8B1038 100%);
+  background-size: 260% 260%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: heroGradientShift 9s ease infinite;
+}
+
+/* Sheen sweep for 3D viewer panel */
+@keyframes sheenSweep {
+  0% { transform: translate(-100%, -100%) rotate(45deg); }
+  25%, 100% { transform: translate(120%, 120%) rotate(45deg); }
+}
+
+/* Staggered load entrance animations (small and fast) */
+@keyframes fadeUpReveal {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up-1 { animation: fadeUpReveal 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.02s forwards; opacity: 0; }
+.animate-fade-up-2 { animation: fadeUpReveal 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.07s forwards; opacity: 0; }
+.animate-fade-up-3 { animation: fadeUpReveal 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.12s forwards; opacity: 0; }
+.animate-fade-up-4 { animation: fadeUpReveal 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.17s forwards; opacity: 0; }
+.animate-fade-up-5 { animation: fadeUpReveal 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.22s forwards; opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up-1,
+  .animate-fade-up-2,
+  .animate-fade-up-3,
+  .animate-fade-up-4,
+  .animate-fade-up-5 {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .gradient-hero-shift {
+    animation: none !important;
+  }
+  .orb {
+    animation: none !important;
+  }
+}
+
+/* Chat bubble with small subtle glow and compact pulse ring */
+@keyframes chatPulseRing {
+  0% { transform: scale(0.98); opacity: 0.7; }
+  50% { transform: scale(1.12); opacity: 0; }
+  100% { transform: scale(1.12); opacity: 0; }
+}
+
+.chat-pulse-glass {
+  position: relative;
+  background: linear-gradient(135deg, rgba(139, 16, 56, 0.9) 0%, rgba(45, 143, 213, 0.9) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 24px -4px rgba(139, 16, 56, 0.4), 0 6px 14px -3px rgba(45, 143, 213, 0.3);
+}
+
+.chat-pulse-glass::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(34, 211, 238, 0.45);
+  animation: chatPulseRing 3.5s ease-out infinite;
+  pointer-events: none;
+}
+
+/* Connecting workflow line pulse */
+@keyframes processTrackFlow {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.process-track-pulse {
+  animation: processTrackFlow 3s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-track-pulse {
+    animation: none !important;
+  }
+}
+
+@keyframes cadRadarSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .nav-link {
@@ -138,7 +351,7 @@ html.dark .glass-nav {
   bottom: -4px;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, #38bdf8, #f43f5e);
+  background: linear-gradient(90deg, #2D8FD5, #E0457B);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);

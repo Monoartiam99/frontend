@@ -1,0 +1,8 @@
+{
+  "name": "Beekshan Technology — Drawing-to-CAD engineering",
+  "description": "Beekshan Technology converts engineering drawings into reviewed, STEP-ready 3D models for practical manufacturing work.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

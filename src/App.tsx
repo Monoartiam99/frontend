@@ -6,177 +6,24 @@ import {
   ArrowRight,
   ArrowUp,
   BadgeCheck,
-  Box,
   Car,
   CheckCircle2,
   ChevronRight,
   CloudUpload,
-  Cpu,
   Factory,
   FileCheck,
-  Layers3,
   Loader2,
   Menu,
   MessageCircle,
-  Moon,
-  PenTool,
   Plane,
-  ScanLine,
-  ShieldCheck,
   Sparkles,
-  Sun,
   X,
 } from 'lucide-react';
-import HeroBuildingAnimation from './HeroBuildingAnimation';
+import HeroCADViewer from './HeroCADViewer';
+import ProcessSection from './ProcessSection';
+import AdvantageSection from './AdvantageSection';
 import CADPreview from './CADPreview';
 import LiveAxonometricPreview from './LiveAxonometricPreview';
-
-// Custom hook for theme management with persistence and OS preference detection
-function useTheme() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window === 'undefined') return 'dark';
-    try {
-      const saved = localStorage.getItem('beekshan-theme');
-      if (saved === 'light' || saved === 'dark') return saved;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    } catch {
-      return 'dark';
-    }
-  });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.remove('dark');
-      root.classList.add('light');
-    }
-    try {
-      localStorage.setItem('beekshan-theme', theme);
-    } catch {}
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
-  return { theme, toggleTheme, isDark: theme === 'dark' };
-}
-
-// Compact, accessible theme toggle component
-function ThemeToggle({
-  isDark,
-  onToggle,
-  className = '',
-}: {
-  isDark: boolean;
-  onToggle: () => void;
-  className?: string;
-}) {
-  const label = isDark ? 'Switch to Day Mode' : 'Switch to Night Mode';
-
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-label={label}
-      title={label}
-      className={`relative inline-flex items-center justify-center h-9 w-9 rounded-xl border transition-all duration-200 active:scale-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#811143] dark:focus-visible:outline-sky-400 ${
-        isDark
-          ? 'border-white/15 bg-slate-900/90 text-amber-300 hover:border-amber-400/40 hover:bg-slate-800 shadow-sm'
-          : 'border-slate-200 bg-white text-slate-700 hover:border-[#811143]/40 hover:text-[#811143] shadow-xs'
-      } ${className}`}
-    >
-      {isDark ? (
-        <Sun size={17} className="transition-transform duration-300 rotate-0 hover:rotate-45 text-amber-300" />
-      ) : (
-        <Moon size={17} className="transition-transform duration-300 -rotate-12 hover:rotate-0 text-slate-700" />
-      )}
-      <span className="sr-only">{label}</span>
-    </button>
-  );
-}
-
-function CadModelSvg({ dark = false }: { dark?: boolean }) {
-  const stroke = dark ? '#38bdf8' : '#811143';
-  const accent = dark ? '#f43f5e' : '#dc6d9e';
-
-  return (
-    <svg viewBox="0 0 420 340" className="cad-assembly h-full w-full select-none" aria-hidden="true">
-      <defs>
-        <radialGradient id="cad-core-glow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.8" />
-          <stop offset="35%" stopColor="#0284c7" stopOpacity="0.4" />
-          <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
-        </radialGradient>
-        <linearGradient id="cad-top-face" x1="0" x2="1" y1="0" y2="1">
-          <stop stopColor="#38bdf8" stopOpacity="0.45" />
-          <stop offset="1" stopColor="#0284c7" stopOpacity="0.2" />
-        </linearGradient>
-        <linearGradient id="cad-side-face" x1="0" x2="1" y1="0" y2="1">
-          <stop stopColor="#f43f5e" stopOpacity="0.55" />
-          <stop offset="1" stopColor="#881337" stopOpacity="0.3" />
-        </linearGradient>
-        <filter id="cad-neon" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="2.5" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-
-      {/* Target Radar Rings */}
-      <g className="cad-radar">
-        <ellipse cx="210" cy="184" rx="145" ry="68" fill="none" stroke={stroke} strokeOpacity="0.2" strokeWidth="1" strokeDasharray="4 4" />
-        <ellipse cx="210" cy="184" rx="110" ry="50" fill="none" stroke={stroke} strokeOpacity="0.25" strokeWidth="1" />
-        <path className="cad-radar-sweep" d="M210 184 L347 149 A142 65 0 0 1 349 186 Z" fill="#38bdf8" fillOpacity="0.15" />
-      </g>
-
-      <circle className="cad-core-halo" cx="210" cy="170" r="95" fill="url(#cad-core-glow)" />
-
-      {/* Isometric 3D Solid Polygon Faces */}
-      <g className="cad-top-face">
-        <polygon points="210,70 310,120 210,170 110,120" fill="url(#cad-top-face)" stroke={stroke} strokeWidth="2" />
-        <path className="cad-top-trace" d="M130 120 L210 80 L290 120 L210 160 Z" fill="none" stroke="#e0f2fe" strokeOpacity="0.8" strokeWidth="1.2" />
-      </g>
-      <g className="cad-left-face">
-        <polygon points="110,120 210,170 210,250 110,200" fill="url(#cad-side-face)" stroke={accent} strokeWidth="2" />
-      </g>
-      <g className="cad-right-face">
-        <polygon points="210,170 310,120 310,200 210,250" fill="rgba(14, 165, 233, 0.28)" stroke={stroke} strokeWidth="2" />
-      </g>
-
-      {/* Internal Bore Hole & Center Axis */}
-      <g className="cad-core" filter="url(#cad-neon)">
-        <ellipse cx="210" cy="145" rx="28" ry="14" fill="rgba(56, 189, 248, 0.15)" stroke="#e0f2fe" strokeWidth="1.8" />
-        <path d="M182 145 V205" stroke={stroke} strokeWidth="1.8" strokeDasharray="3 3" />
-        <path d="M238 145 V205" stroke={stroke} strokeWidth="1.8" strokeDasharray="3 3" />
-        <ellipse cx="210" cy="205" rx="28" ry="14" fill="rgba(244, 63, 94, 0.18)" stroke="#f43f5e" strokeWidth="1.8" />
-        <ellipse className="cad-core-scan" cx="210" cy="175" rx="27" ry="9" fill="none" stroke="#38bdf8" strokeWidth="1.5" />
-      </g>
-
-      {/* Orbit Rings & Dimension Coordinates */}
-      <g className="cad-orbit" filter="url(#cad-neon)">
-        <ellipse cx="210" cy="170" rx="124" ry="56" fill="none" stroke={stroke} strokeDasharray="3 8" strokeOpacity="0.75" />
-        <circle cx="334" cy="170" r="4.5" fill="#38bdf8" />
-        <circle cx="86" cy="170" r="3.5" fill="#f43f5e" />
-      </g>
-
-      <g className="cad-data-points" fill="#38bdf8">
-        <circle cx="122" cy="91" r="2.5" />
-        <circle cx="310" cy="91" r="2.5" />
-        <circle cx="92" cy="224" r="2.5" />
-        <circle cx="328" cy="224" r="2.5" />
-      </g>
-
-      <path className="cad-measure-line" d="M110 268 H310" stroke={stroke} strokeWidth="1" strokeDasharray="4 2" />
-      <path className="cad-measure-line" d="M95 112 L210 52 L325 112" stroke={stroke} strokeWidth="1" strokeDasharray="4 2" />
-    </svg>
-  );
-}
 
 // Engineering CAD Wireframe visual details revealed on hover
 function AerospaceCADWireframe({ className = '' }: { className?: string }) {
@@ -469,20 +316,6 @@ function CtaCadVisual() {
       {/* Ambient background glow behind visual */}
       <div className="absolute inset-0 bg-radial from-rose-500/25 via-sky-500/10 to-transparent blur-2xl -z-10 pointer-events-none" />
 
-      {/* Engineering HUD metadata chips */}
-      <div className="flex items-center justify-between gap-2 mb-3 px-1">
-        <div className="flex items-center gap-1.5 rounded-full border border-rose-400/30 bg-slate-950/70 px-3 py-1 text-[11px] font-mono tracking-wider text-rose-200/90 backdrop-blur-md shadow-xs">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
-          </span>
-          <span>RECONSTRUCTED // STEP AP214</span>
-        </div>
-        <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-sky-400/25 bg-slate-950/70 px-2.5 py-1 text-[10px] font-mono tracking-wider text-sky-200/80 backdrop-blur-md shadow-xs">
-          <span>TOL: ±0.005mm</span>
-        </div>
-      </div>
-
       {/* Isometric 3D CAD SVG Stage */}
       <div className="relative rounded-2xl border border-white/15 bg-gradient-to-b from-slate-950/80 via-[#0b1329]/70 to-slate-950/85 p-4 shadow-2xl backdrop-blur-md overflow-hidden">
         {/* Subtle interior technical grid */}
@@ -638,18 +471,15 @@ function CtaCadVisual() {
             />
           </g>
 
-          {/* Coordinate Datum Triad (Isometric X, Y, Z) */}
+          {/* Coordinate Datum Triad (clean isometric triad without text) */}
           <g transform="translate(60, 85)">
             <circle cx="0" cy="0" r="3" fill="#ffffff" />
             {/* X axis (rose) */}
             <line x1="0" y1="0" x2="30" y2="15" stroke="#f43f5e" strokeWidth="1.75" />
-            <text x="34" y="20" fill="#f43f5e" fontSize="9" fontFamily="monospace" fontWeight="bold">+X</text>
             {/* Y axis (sky) */}
             <line x1="0" y1="0" x2="-28" y2="14" stroke="#38bdf8" strokeWidth="1.75" />
-            <text x="-44" y="19" fill="#38bdf8" fontSize="9" fontFamily="monospace" fontWeight="bold">+Y</text>
             {/* Z axis (emerald/white) */}
             <line x1="0" y1="0" x2="0" y2="-32" stroke="#ffffff" strokeWidth="1.75" />
-            <text x="-4" y="-36" fill="#ffffff" fontSize="9" fontFamily="monospace" fontWeight="bold">+Z</text>
           </g>
 
           {/* Dimension Callout Lines & Annotation Leaders */}
@@ -712,9 +542,19 @@ const navItems = [
 ];
 
 function App() {
-  const { isDark, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [trialOpen, setTrialOpen] = useState(() => new URLSearchParams(window.location.search).has('job'));
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const openTrial = () => {
     setMenuOpen(false);
@@ -727,364 +567,216 @@ function App() {
   };
 
   if (trialOpen) {
-    return (
-      <TrialUploadPage
-        isDark={isDark}
-        onToggleTheme={toggleTheme}
-        onBack={() => setTrialOpen(false)}
-      />
-    );
+    return <TrialUploadPage onBack={() => setTrialOpen(false)} />;
   }
 
   return (
-    <div className="page-shell min-h-screen text-slate-900 dark:text-slate-100 font-sans selection:bg-[#811143]/20 dark:selection:bg-[#f43f5e]/30 selection:text-[#811143] dark:selection:text-white transition-colors duration-300 overflow-x-hidden">
-      {/* Background Grid Pattern */}
+    <div className="page-shell min-h-screen text-slate-900 font-sans selection:bg-[#8B1038]/20 selection:text-[#8B1038] overflow-x-hidden">
+      {/* Background Atmosphere: Grid Pattern & Slow Floating Ambient Orbs */}
       <div className="mesh-grid" />
       <div className="orb orb-a" />
       <div className="orb orb-b" />
+      <div className="orb orb-c" />
+      <div className="orb orb-hero-viewer" />
 
-      {/* HEADER & NAVIGATION */}
-      <header className="glass-nav sticky top-0 z-50 transition-colors duration-200">
-        <div className="mx-auto flex h-[72px] sm:h-[76px] max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Logo (Original, untouched, correctly sized) */}
-          <a
-            href="#home"
-            className="brand-mark flex items-center transition-opacity hover:opacity-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#811143] dark:focus-visible:outline-sky-400"
-            aria-label="Beekshan Technology home"
-          >
-            <img
-              src="/beekshan_logo.png"
-              alt="Beekshan Technology"
-              className="h-9 sm:h-10 w-auto object-contain"
-            />
-          </a>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden items-center gap-8 text-[14px] font-medium text-slate-600 dark:text-slate-300 lg:flex" aria-label="Main Navigation">
-            <a href="#home" className="nav-link is-active text-slate-950 dark:text-white font-semibold">
-              Home
-            </a>
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="nav-link text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-colors"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          {/* Header Action CTAs + Theme Toggle */}
-          <div className="hidden items-center gap-4 sm:flex">
-            {/* Day / Night Theme Toggle */}
-            <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
-
+      {/* FLOATING FROSTED GLASS NAVBAR (Detached from top edge with rounded corners) */}
+      <header className="sticky top-0 z-50 pt-3 sm:pt-4 px-3 sm:px-6 lg:px-8 pointer-events-none transition-all duration-300">
+        <div
+          className={`mx-auto max-w-[1360px] pointer-events-auto rounded-2xl sm:rounded-3xl floating-glass-nav transition-all duration-300 ${
+            isScrolled ? 'is-scrolled' : ''
+          }`}
+        >
+          <div className="flex h-[72px] sm:h-[80px] items-center justify-between px-4 sm:px-6 lg:px-8">
+            {/* Logo */}
             <a
-              href="#trial"
-              className="text-[14px] font-medium text-slate-600 dark:text-slate-300 hover:text-[#811143] dark:hover:text-white transition-colors px-2 py-1"
+              href="#home"
+              className="brand-mark flex items-center transition-opacity hover:opacity-95 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-600"
+              aria-label="Beekshan Technology home"
             >
-              Login
+              <img
+                src="/beekshan_logo.png"
+                alt="Beekshan Technology"
+                className="h-10 sm:h-11 md:h-12 w-auto object-contain"
+              />
             </a>
-            <button
-              type="button"
-              onClick={openTrial}
-              className="glow-button inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#811143] via-[#a81450] to-[#0284c7] px-5 py-2.5 text-[14px] font-semibold text-white shadow-md shadow-[#811143]/20 hover:shadow-lg hover:shadow-[#811143]/30 active:scale-[0.98] transition-all"
-            >
-              <span>Begin a trial</span>
-              <Sparkles size={14} className="text-rose-200" />
-            </button>
-          </div>
 
-          {/* Mobile Right Controls */}
-          <div className="flex items-center gap-2 lg:hidden">
-            <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
-            <button
-              className="rounded-xl border border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-900/80 p-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-              onClick={() => setMenuOpen((open) => !open)}
-              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            >
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Navigation Drawer */}
-        {menuOpen && (
-          <div className="border-t border-slate-200/90 dark:border-white/10 bg-white/95 dark:bg-[#090e1f]/95 backdrop-blur-2xl px-6 py-6 lg:hidden shadow-2xl">
-            <div className="flex flex-col gap-4 font-medium text-slate-700 dark:text-slate-300">
-              <a
-                href="#home"
-                className="py-1.5 font-semibold text-slate-950 dark:text-white hover:text-[#811143] dark:hover:text-rose-400"
-                onClick={() => setMenuOpen(false)}
-              >
+            {/* Desktop Navigation Items */}
+            <nav className="hidden items-center gap-7 lg:gap-8 text-[14px] font-medium text-slate-600 lg:flex" aria-label="Main Navigation">
+              <a href="#home" className="nav-link is-active text-slate-950 font-bold">
                 Home
               </a>
               {navItems.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}
-                  className="py-1.5 hover:text-[#811143] dark:hover:text-rose-400 transition-colors"
-                  onClick={() => setMenuOpen(false)}
+                  className="nav-link text-slate-600 hover:text-slate-950 transition-colors"
                 >
                   {item.label}
                 </a>
               ))}
-              <div className="mt-4 flex flex-col gap-3.5 border-t border-slate-200 dark:border-white/10 pt-4">
-                <div className="flex items-center justify-between py-1 text-sm text-slate-600 dark:text-slate-400">
-                  <span className="flex items-center gap-2">
-                    {isDark ? <Moon size={16} className="text-sky-400" /> : <Sun size={16} className="text-amber-500" />}
-                    Theme mode:
-                  </span>
-                  <button
-                    type="button"
-                    onClick={toggleTheme}
-                    className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10"
-                  >
-                    {isDark ? '☀️ Switch to Day' : '🌙 Switch to Night'}
-                  </button>
-                </div>
-                <a
-                  href="#trial"
-                  className="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-[#811143] dark:hover:text-white"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Login
-                </a>
-                <button
-                  type="button"
-                  className="rounded-xl bg-gradient-to-r from-[#811143] to-[#0284c7] px-4 py-3 text-center text-sm font-bold text-white shadow-lg shadow-[#811143]/25"
-                  onClick={openTrial}
-                >
-                  Begin a trial
-                </button>
-              </div>
+            </nav>
+
+            {/* Header Action CTAs */}
+            <div className="hidden items-center gap-3 sm:flex">
+              <a
+                href="#trial"
+                className="text-[14px] font-medium text-slate-700 hover:text-slate-950 transition-colors px-2 py-1"
+              >
+                Login
+              </a>
+              <button
+                type="button"
+                onClick={openTrial}
+                className="btn-primary-glow inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-[14px] font-semibold text-white shadow-md active:scale-[0.98] transition-all"
+              >
+                <span>Begin a trial</span>
+                <Sparkles size={14} className="text-cyan-200" />
+              </button>
+            </div>
+
+            {/* Mobile Controls */}
+            <div className="flex items-center gap-2 lg:hidden">
+              <button
+                className="rounded-xl border border-slate-200 bg-white/80 p-2 text-slate-700 hover:bg-slate-100 shadow-xs"
+                onClick={() => setMenuOpen((open) => !open)}
+                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              >
+                {menuOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
             </div>
           </div>
-        )}
+
+          {/* Mobile Navigation Drawer */}
+          {menuOpen && (
+            <div className="border-t border-slate-200/80 px-6 py-5 lg:hidden rounded-b-2xl sm:rounded-b-3xl bg-white/95 backdrop-blur-xl">
+              <div className="flex flex-col gap-3.5 font-medium text-slate-700">
+                <a
+                  href="#home"
+                  className="py-1 font-bold text-slate-950 hover:text-[#8B1038]"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Home
+                </a>
+                {navItems.map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className="py-1 hover:text-[#8B1038] transition-colors"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+                <div className="mt-3 flex flex-col gap-3 border-t border-slate-200/80 pt-4">
+                  <a
+                    href="#trial"
+                    className="text-sm font-semibold text-slate-700 hover:text-slate-950"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Login
+                  </a>
+                  <button
+                    type="button"
+                    className="btn-primary-glow rounded-xl px-4 py-3 text-center text-sm font-bold text-white shadow-lg"
+                    onClick={openTrial}
+                  >
+                    Begin a trial
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </header>
 
-      {/* HERO SECTION */}
+      {/* HERO SECTION (MODERN GLASSMORPHIC REDESIGN - DAY MODE & PERFECTLY FITTED) */}
       <section
         id="home"
-        className="relative z-10 mx-auto grid max-w-[1400px] items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-14 lg:px-8 pt-12 sm:pt-16 pb-16 sm:pb-24"
+        className="relative z-10 mx-auto grid max-w-[1360px] items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-8 xl:gap-12 px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-12 sm:pb-20"
       >
-        <div className="z-20 flex max-w-[640px] flex-col gap-6">
-          {/* Engineering AI Badge */}
-          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#811143]/20 dark:border-sky-400/30 bg-white/80 dark:bg-sky-950/40 px-3.5 py-1.5 text-xs font-mono font-semibold text-[#811143] dark:text-sky-300 shadow-xs backdrop-blur-md transition-colors">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            AI-assisted, engineer-reviewed CAD
-            <span className="text-slate-400 dark:text-slate-600">|</span>
-            <span className="text-rose-500 dark:text-rose-300">v2.6 VISION</span>
+        {/* Left Column: Perfectly Fitted Headline, Copy, Action CTAs & Spec Ticker */}
+        <div className="z-20 flex w-full max-w-[580px] xl:max-w-[620px] flex-col justify-center gap-4 sm:gap-4.5">
+          {/* Engineering AI Badge Pill */}
+          <div className="animate-fade-up-1 inline-flex w-fit items-center gap-2 rounded-full px-3 py-1 text-[11px] font-mono font-semibold glass-badge-pill text-[#8B1038]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
+            </span>
+            <span className="font-bold text-slate-800">AI-assisted, engineer-reviewed CAD</span>
+            <span className="text-slate-300">|</span>
+            <span className="text-[#8B1038] font-bold">v2.6 VISION</span>
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.8rem] leading-[1.06] font-extrabold tracking-tight text-slate-950 dark:text-white transition-colors">
+          {/* Primary Headline with Animated Gradient Accent */}
+          <h1 className="animate-fade-up-2 font-display text-3xl sm:text-4xl lg:text-[2.65rem] xl:text-[2.85rem] leading-[1.12] font-extrabold tracking-tight text-slate-950">
             Turn technical drawings into{' '}
-            <span className="gradient-accent">ready-to-use 3D CAD</span>
+            <span className="gradient-hero-shift inline-block font-extrabold">ready-to-use 3D CAD</span>
           </h1>
 
-          <p className="text-base sm:text-lg leading-relaxed text-slate-600 dark:text-slate-300 transition-colors">
-            Beekshan Technology transforms <strong className="text-slate-900 dark:text-white font-semibold">engineering drawings into practical 3D models</strong>{' '}
+          {/* Body Paragraph */}
+          <p className="animate-fade-up-3 text-[15px] sm:text-base leading-relaxed text-slate-600">
+            Beekshan Technology transforms <strong className="text-slate-950 font-semibold">engineering drawings into practical 3D models</strong>{' '}
             with AI-assisted interpretation and careful engineer review. Receive a STEP-ready result built for the
             work that follows.
           </p>
 
-          <p className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 transition-colors">
-            <span className="h-1.5 w-6 rounded-full bg-gradient-to-r from-sky-400 to-rose-500" />
+          {/* Value Subheading */}
+          <p className="animate-fade-up-3 text-sm sm:text-[15px] font-semibold text-slate-800 flex items-center gap-2">
+            <span className="h-1.5 w-6 rounded-full bg-gradient-to-r from-[#22D3EE] via-[#E0457B] to-[#8B1038]" />
             Clear inputs. Confident manufacturing decisions.
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-wrap items-center gap-4 pt-2">
+          <div className="animate-fade-up-4 flex flex-wrap items-center gap-3 pt-1">
             <button
               type="button"
               onClick={openTrial}
-              className="glow-button inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-[#811143] via-[#a81450] to-[#0284c7] px-7 py-4 text-base font-bold text-white shadow-xl shadow-[#811143]/25 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className="btn-primary-glow inline-flex items-center gap-2.5 rounded-2xl px-6 py-3.5 text-sm sm:text-[15px] font-bold text-white shadow-xl transition-all"
             >
-              <span>Begin your trial</span>
-              <ArrowRight size={18} />
+              <span>Begin a trial</span>
+              <ArrowRight size={17} />
             </button>
             <a
               href="#how-it-works"
-              className="inline-flex items-center gap-1.5 px-5 py-4 text-base font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white rounded-xl border border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 bg-white/70 dark:bg-white/5 backdrop-blur-sm transition-all shadow-xs"
+              className="btn-secondary-glass inline-flex items-center gap-2 rounded-2xl px-5 py-3.5 text-sm sm:text-[15px] font-semibold text-slate-800 hover:text-slate-950 transition-all"
             >
               <span>Explore the process</span>
               <ChevronRight size={16} />
             </a>
           </div>
 
-          {/* Live Specification Ticker */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-slate-200 dark:border-white/10 text-xs font-mono text-slate-500 dark:text-slate-400 transition-colors">
-            <div className="border-l-2 border-sky-400 pl-3">
-              <span className="block text-slate-900 dark:text-white font-bold text-sm">0.01 mm</span>
+          {/* Live Engineering Specification Ticker */}
+          <div className="animate-fade-up-5 grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3.5 border-t border-slate-200/90 text-xs font-mono text-slate-600">
+            <div className="border-l-2 border-[#22D3EE] pl-2.5">
+              <span className="block text-slate-950 font-bold text-sm">0.01 mm</span>
               <span>Tolerance</span>
             </div>
-            <div className="border-l-2 border-rose-500 pl-3">
-              <span className="block text-slate-900 dark:text-white font-bold text-sm">STEP / STL</span>
+            <div className="border-l-2 border-[#E0457B] pl-2.5">
+              <span className="block text-slate-950 font-bold text-sm">STEP / STL</span>
               <span>Solid B-Rep</span>
             </div>
-            <div className="border-l-2 border-emerald-400 pl-3">
-              <span className="block text-slate-900 dark:text-white font-bold text-sm">PP1 + YOLO</span>
+            <div className="border-l-2 border-[#2D8FD5] pl-2.5">
+              <span className="block text-slate-950 font-bold text-sm">PP1 + YOLO</span>
               <span>Traced Vision</span>
             </div>
-            <div className="border-l-2 border-amber-400 pl-3">
-              <span className="block text-slate-900 dark:text-white font-bold text-sm">100% Watertight</span>
+            <div className="border-l-2 border-emerald-600 pl-2.5">
+              <span className="block text-slate-950 font-bold text-sm">100% Watertight</span>
               <span>Solid Geometry</span>
             </div>
           </div>
         </div>
 
-        {/* 3D CAD Interactive Viewport */}
-        <div className="relative w-full rounded-3xl border border-slate-200/90 dark:border-white/15 bg-gradient-to-b from-white via-slate-50 to-rose-50/20 dark:from-slate-900/80 dark:via-[#0a1024]/90 dark:to-[#040817] p-2.5 sm:p-3.5 shadow-xl shadow-slate-900/5 dark:shadow-sky-950/20 backdrop-blur-md transition-colors">
-          <div className="relative overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-[#040714]">
-            {/* Viewport Control Bar (macOS Window Controls) */}
-            <div className="flex items-center border-b border-slate-800/90 bg-[#060a19] px-4 py-3">
-              <div className="flex items-center gap-2" aria-hidden="true">
-                <span className="h-3 w-3 rounded-full bg-[#FF5F57] border border-[#E0443E]/70 shadow-[inset_0_1px_1px_rgba(255,255,255,0.35)]" />
-                <span className="h-3 w-3 rounded-full bg-[#FEBC2E] border border-[#D89E24]/70 shadow-[inset_0_1px_1px_rgba(255,255,255,0.35)]" />
-                <span className="h-3 w-3 rounded-full bg-[#28C840] border border-[#1AAB29]/70 shadow-[inset_0_1px_1px_rgba(255,255,255,0.35)]" />
-              </div>
-            </div>
-
-            {/* Interactive Three.js CAD Hero Scene */}
-            <HeroBuildingAnimation />
-
-            {/* Viewport Footer Readout */}
-            <div className="flex items-center justify-between border-t border-slate-800/90 bg-[#060a19] px-4 py-2.5 text-[11px] font-mono text-slate-400">
-              <span className="text-slate-400">COORDINATES: ISO-Z-UP</span>
-              <span className="gradient-accent font-semibold tracking-wide">
-                INTELLIGENT SOLID RECONSTRUCTION
-              </span>
-            </div>
-          </div>
+        {/* Right Column: Premium 3D Glassmorphic CAD Viewer (~15% larger, balanced hero presence) */}
+        <div className="z-20 w-full max-w-[580px] lg:max-w-[560px] xl:max-w-[600px] mx-auto lg:ml-auto animate-fade-up-3">
+          <HeroCADViewer />
         </div>
       </section>
 
       {/* PROCESS SECTION */}
-      <section
-        id="how-it-works"
-        className="relative z-10 py-24 lg:py-32 border-t border-b border-slate-200 dark:border-white/10 bg-slate-50/80 dark:bg-gradient-to-b dark:from-[#060913] dark:via-[#090e21] dark:to-[#060913] transition-colors"
-      >
-        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto mb-16 max-w-2xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#811143]/20 dark:border-rose-500/30 bg-white dark:bg-rose-950/30 px-3.5 py-1 text-xs font-mono font-bold tracking-[0.2em] text-[#811143] dark:text-rose-300 uppercase mb-4 shadow-xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#811143] dark:bg-rose-500" />
-              The process
-            </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-950 dark:text-white tracking-tight transition-colors">
-              A direct path from drawing to digital model
-            </h2>
-          </div>
+      <ProcessSection />
 
-          <div className="grid gap-6 md:grid-cols-3 relative">
-            {[
-              {
-                icon: PenTool,
-                step: '01',
-                title: 'Send your source drawing',
-                text: 'Share a PDF, scan, or DXF. Beekshan Technology identifies the essential geometry, dimensions, and notes.',
-                accent: 'from-sky-500 to-blue-600',
-              },
-              {
-                icon: Cpu,
-                step: '02',
-                title: 'Build the 3D model',
-                text: 'The drawing is interpreted as a usable solid model with manufacturing-aware details and STEP output.',
-                accent: 'from-[#811143] to-rose-600',
-              },
-              {
-                icon: ShieldCheck,
-                step: '03',
-                title: 'Review with confidence',
-                text: 'Engineering review checks the completed model before it is delivered for your downstream workflow.',
-                accent: 'from-emerald-500 to-teal-600',
-              },
-            ].map((step, index) => (
-              <article
-                key={step.title}
-                className="tech-card group relative flex flex-col justify-between rounded-2xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-slate-900/60 p-8 shadow-xs dark:shadow-xl backdrop-blur-md hover:border-[#811143]/30 dark:hover:border-white/25 hover:shadow-lg dark:hover:bg-slate-900/90 transition-all duration-300"
-              >
-                <div>
-                  <div className="mb-6 flex items-center justify-between">
-                    <div
-                      className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${step.accent} text-white shadow-md transition-transform duration-300 group-hover:scale-110`}
-                    >
-                      <step.icon size={22} />
-                    </div>
-                    <span className="font-mono text-3xl font-extrabold text-slate-300 dark:text-slate-600 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
-                      {step.step}
-                    </span>
-                  </div>
-                  <h3 className="mb-3 text-xl font-bold text-slate-950 dark:text-white group-hover:text-[#811143] dark:group-hover:text-sky-300 transition-colors">
-                    {step.title}
-                  </h3>
-                  <p className="leading-relaxed text-slate-600 dark:text-slate-300 text-[15px]">{step.text}</p>
-                </div>
-                {index < 2 && (
-                  <div className="mt-8 hidden h-1 rounded-full bg-gradient-to-r from-slate-200 dark:from-sky-500/40 via-rose-500/20 to-transparent lg:block" />
-                )}
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* DARK TECHNOLOGY SHOWCASE (CENTERPIECE) */}
-      <section
-        id="resources"
-        className="relative z-10 bg-[#030612] py-24 lg:py-32 border-b border-white/10 overflow-hidden text-white"
-      >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[550px] bg-gradient-to-r from-sky-900/15 via-[#811143]/20 to-sky-900/15 rounded-full blur-[160px] pointer-events-none" />
-
-        <div className="relative mx-auto grid max-w-[1400px] items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-sky-500/30 bg-sky-950/40 px-3.5 py-1 text-xs font-mono font-bold tracking-[0.2em] text-sky-300 uppercase mb-4">
-              <span className="h-1.5 w-1.5 rounded-full bg-sky-400" />
-              The Beekshan Technology advantage
-            </div>
-            <h2 className="font-display mb-6 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white">
-              Bring archived engineering back into circulation
-            </h2>
-            <p className="mb-10 max-w-xl text-base sm:text-lg leading-relaxed text-slate-300">
-              Move beyond static paperwork. Beekshan Technology converts documented part intent into a dependable digital model
-              for machining, analysis, and production planning.
-            </p>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {[
-                { icon: ScanLine, title: 'Drawing awareness', text: 'Understands projections, sections, and annotations.' },
-                { icon: Box, title: 'Usable solid output', text: 'A STEP model made for engineering work, not an approximate mesh.' },
-                { icon: Layers3, title: 'Manufacturing features', text: 'Captures key openings, radii, pockets, and repeated details.' },
-                { icon: BadgeCheck, title: 'Engineering review', text: 'A specialist checks the model before release.' },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-2xl border border-white/10 bg-slate-900/50 p-5 backdrop-blur-md transition-all duration-200 hover:border-sky-400/40 hover:bg-slate-900/80"
-                >
-                  <item.icon className="mb-3 text-sky-400" size={22} />
-                  <h3 className="mb-1.5 font-bold text-white text-[16px]">{item.title}</h3>
-                  <p className="text-sm leading-relaxed text-slate-400">{item.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Isometric CAD Scanner Presentation */}
-          <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-slate-900/90 via-[#070d1e] to-[#040817] p-6 sm:p-8 shadow-2xl">
-            <div className="absolute -right-10 -top-10 h-44 w-44 rounded-full bg-rose-500/20 blur-3xl pointer-events-none" />
-            <div className="relative aspect-[4/3] w-full flex items-center justify-center">
-              <CadModelSvg dark />
-            </div>
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-800 pt-4 text-xs font-mono text-slate-400">
-              <span className="flex items-center gap-2 text-emerald-400 font-semibold">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                Model review complete
-              </span>
-              <span className="font-semibold text-sky-300">Ready for engineering use</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* CAPABILITIES & TECHNOLOGY SHOWCASE (CENTERPIECE - DAY MODE) */}
+      <AdvantageSection />
 
 
 
@@ -1186,52 +878,52 @@ function App() {
         </div>
       </section>
 
-      {/* COMPLETELY REDESIGNED FOOTER */}
-      <footer id="about" className="relative z-10 border-t border-slate-200 dark:border-white/10 bg-slate-900 dark:bg-[#02050e] text-slate-400 pt-16 pb-12 transition-colors">
+      {/* COMPLETELY REDESIGNED FOOTER (DAY MODE - PRESERVED CONTEXT) */}
+      <footer id="about" className="relative z-10 border-t border-slate-200/90 bg-white/95 backdrop-blur-md text-slate-600 pt-16 pb-12">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
           {/* Main Footer Grid */}
-          <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr] pb-12 border-b border-slate-800 dark:border-white/10">
+          <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1fr] pb-12 border-b border-slate-200/90">
             {/* Brand Column */}
             <div className="flex flex-col gap-5">
-              <a href="#home" className="flex items-center" aria-label="Beekshan Technology home">
+              <a href="#home" className="flex items-center transition-opacity hover:opacity-95" aria-label="Beekshan Technology home">
                 <img
                   src="/beekshan_logo.png"
                   alt="Beekshan Technology"
-                  className="h-10 w-auto object-contain filter brightness-110"
+                  className="h-11 sm:h-12 md:h-13 w-auto object-contain"
                 />
               </a>
-              <p className="text-sm leading-relaxed text-slate-400 max-w-sm">
+              <p className="text-sm leading-relaxed text-slate-600 max-w-sm">
                 Engineering drawings, made useful again. Converting 2D technical drawings into verified, STEP-ready 3D CAD models.
               </p>
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/30 px-3 py-1 text-xs font-mono text-emerald-400 w-fit">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-50 px-3 py-1 text-xs font-mono text-emerald-800 w-fit shadow-xs">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 All CAD Engines Operational
               </div>
             </div>
 
             {/* Navigation Column 1: Platform */}
             <div>
-              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-white mb-4">
+              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 mb-4">
                 Platform
               </h4>
               <ul className="space-y-2.5 text-sm">
                 <li>
-                  <a href="#how-it-works" className="hover:text-white transition-colors">
+                  <a href="#how-it-works" className="text-slate-600 hover:text-[#8B1038] transition-colors">
                     Process Pipeline
                   </a>
                 </li>
                 <li>
-                  <a href="#industries" className="hover:text-white transition-colors">
+                  <a href="#industries" className="text-slate-600 hover:text-[#8B1038] transition-colors">
                     Applications
                   </a>
                 </li>
                 <li>
-                  <a href="#resources" className="hover:text-white transition-colors">
+                  <a href="#resources" className="text-slate-600 hover:text-[#8B1038] transition-colors">
                     Capabilities
                   </a>
                 </li>
                 <li>
-                  <a href="#pricing" className="hover:text-white transition-colors">
+                  <a href="#pricing" className="text-slate-600 hover:text-[#8B1038] transition-colors">
                     Plans & Trial
                   </a>
                 </li>
@@ -1240,20 +932,20 @@ function App() {
 
             {/* Navigation Column 2: Capabilities */}
             <div>
-              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-white mb-4">
+              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 mb-4">
                 Capabilities
               </h4>
               <ul className="space-y-2.5 text-sm">
-                <li className="hover:text-white transition-colors cursor-pointer" onClick={openTrial}>
+                <li className="text-slate-600 hover:text-[#8B1038] transition-colors cursor-pointer" onClick={openTrial}>
                   YOLO Vision Detection
                 </li>
-                <li className="hover:text-white transition-colors cursor-pointer" onClick={openTrial}>
+                <li className="text-slate-600 hover:text-[#8B1038] transition-colors cursor-pointer" onClick={openTrial}>
                   PP1 Image Preprocessing
                 </li>
-                <li className="hover:text-white transition-colors cursor-pointer" onClick={openTrial}>
+                <li className="text-slate-600 hover:text-[#8B1038] transition-colors cursor-pointer" onClick={openTrial}>
                   PaddleOCR Dimension Tracing
                 </li>
-                <li className="hover:text-white transition-colors cursor-pointer" onClick={openTrial}>
+                <li className="text-slate-600 hover:text-[#8B1038] transition-colors cursor-pointer" onClick={openTrial}>
                   STEP Solid Export
                 </li>
               </ul>
@@ -1261,7 +953,7 @@ function App() {
 
             {/* Navigation Column 3: Company & Trial */}
             <div>
-              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-white mb-4">
+              <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 mb-4">
                 Get Started
               </h4>
               <ul className="space-y-2.5 text-sm">
@@ -1269,23 +961,23 @@ function App() {
                   <button
                     type="button"
                     onClick={openTrial}
-                    className="text-[#f43f5e] font-semibold hover:underline flex items-center gap-1"
+                    className="text-[#8B1038] font-bold hover:underline flex items-center gap-1"
                   >
                     Launch Free Trial <ArrowRight size={14} />
                   </button>
                 </li>
                 <li>
-                  <a href="#trial" className="hover:text-white transition-colors">
+                  <a href="#trial" className="text-slate-600 hover:text-[#8B1038] transition-colors">
                     Account Login
                   </a>
                 </li>
                 <li>
-                  <a href="#resources" className="hover:text-white transition-colors">
+                  <a href="#resources" className="text-slate-600 hover:text-[#8B1038] transition-colors">
                     Engineer Review
                   </a>
                 </li>
                 <li>
-                  <a href="#about" className="hover:text-white transition-colors">
+                  <a href="#about" className="text-slate-600 hover:text-[#8B1038] transition-colors">
                     Company Information
                   </a>
                 </li>
@@ -1302,7 +994,7 @@ function App() {
             <button
               type="button"
               onClick={scrollToTop}
-              className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white transition-colors"
+              className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 transition-colors"
             >
               <span>BACK TO TOP</span>
               <ArrowUp size={14} />
@@ -1314,7 +1006,7 @@ function App() {
       {/* CHAT PULSE ACTION */}
       <a
         href="#trial"
-        className="chat-pulse fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#811143] to-[#e11d48] text-white shadow-xl shadow-[#811143]/40 transition-all duration-200 hover:scale-110 active:scale-95"
+        className="chat-pulse-glass fixed right-6 bottom-6 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white transition-all duration-300 hover:scale-110 active:scale-95"
         aria-label="Start a conversation"
       >
         <MessageCircle size={24} />
@@ -1324,12 +1016,8 @@ function App() {
 }
 
 function TrialUploadPage({
-  isDark,
-  onToggleTheme,
   onBack,
 }: {
-  isDark: boolean;
-  onToggleTheme: () => void;
   onBack: () => void;
 }) {
   const [dragging, setDragging] = useState(false);
@@ -1500,22 +1188,20 @@ function TrialUploadPage({
       <div className="fixed inset-0 pointer-events-none z-0 tech-grid-light dark:tech-grid-dark opacity-50 dark:opacity-60" />
 
       {/* Top Header */}
-      <header className="relative z-10 mx-auto flex max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8 py-5 border-b border-slate-200 dark:border-white/10 bg-white/85 dark:bg-[#070b18]/85 backdrop-blur-md transition-colors">
+      <header className="relative z-10 mx-auto flex max-w-[1400px] items-center justify-between px-4 sm:px-6 lg:px-8 py-5 border-b border-slate-200/90 bg-white/90 backdrop-blur-md">
         <img
           src="/beekshan_logo.png"
           alt="Beekshan Technology"
-          className="h-8 sm:h-10 w-auto object-contain"
+          className="h-10 sm:h-12 w-auto object-contain"
         />
         <div className="flex items-center gap-4">
-          <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
-
-          <span className="hidden items-center gap-1.5 rounded-full border border-slate-200 dark:border-sky-400/30 bg-slate-100 dark:bg-sky-950/40 px-3 py-1.5 text-xs font-mono font-semibold text-slate-700 dark:text-sky-300 sm:inline-flex transition-colors">
-            <BadgeCheck size={15} className="text-[#811143] dark:text-emerald-400" /> Secure workspace
+          <span className="hidden items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-50 px-3 py-1.5 text-xs font-mono font-semibold text-emerald-800 sm:inline-flex shadow-xs">
+            <BadgeCheck size={15} className="text-emerald-600" /> Secure workspace
           </span>
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-slate-950 transition-colors"
           >
             <ArrowLeft size={18} />
             Back to site
