@@ -70,7 +70,6 @@ See `.env.example` for `MODEL_PATH`, YOLO confidence/IoU, upload and pixel limit
 JSON schema version `1.0.0` contains document/image analysis, detections, OCR regions/items with confidence and provenance, engineering data (detected vs uncertain), geometry decision, CAD status/warnings, and validation confidence/missing information.
 
 ## Tests and troubleshooting
-
 Run `python -m unittest discover -s tests` from `backend`. The unit tests cover structured dimension parsing, uncertainty handling, conservative CAD refusal, and safe job paths. Model-backed end-to-end processing requires OpenCV, PaddlePaddle/PaddleOCR, Ultralytics-compatible `best.pt`, and CadQuery for export. `GET /health` reports whether the configured weights exist, not whether inference dependencies are installed. A missing YOLO model does not block single-image OCR. If PaddleOCR or image dependencies are missing, the job reports `failed` with the underlying message; install the documented runtime and retry.
 
 The general CAD interpreter does not yet reconstruct arbitrary orthographic projections. It only creates a section preview when OCR recognizes the channel and angle designations; arbitrary drawings still need a supported profile or a more complete geometry reconstruction workflow. The sample bracket generator is drawing-specific and its assumed dimensions are listed in the generated JSON and script. YOLO class names depend on the labels embedded in `best.pt`; verify that model's class map includes `Note`, `PartDrawing`, and `Table` before deployment.
